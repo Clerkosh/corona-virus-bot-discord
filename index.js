@@ -21,10 +21,11 @@ client.on('ready', function (evt) {
     setInterval(function() { http.get("http://corona-virus-bot-discord.herokuapp.com/"); }, 300000);
 });
 function sleep (time) {
-    return new Promise((resolve) => setTimeout(resolve, time));
+    return new Promise((resolve) => setTimeout(resolve, time)).catch(err =>{ console.log("Error: " + err)});
 }
 
 async function Korona() {
+    try{
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto('https://korona.ws/');
@@ -34,6 +35,10 @@ async function Korona() {
     await sleep(7000);
     await page.screenshot({path: 'korona.png'});
     await browser.close();
+    }
+    catch(err){
+        console.log("Error: " + err)
+    }
 }
 
 client.on('message', message => {
