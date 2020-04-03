@@ -1,18 +1,18 @@
+require('dotenv').config();
 const http = require('http');
 const puppeteer = require('puppeteer');
 const Discord = require('discord.js');
-var auth = require('./auth.json');
 const client = new Discord.Client();
 
-client.login(auth.token); 
+client.login(process.env.DISCORD_TOKEN); 
 
 const server = http.createServer((req, res) => {
     res.statusCode = 200;
     res.setHeader('Content-Type', 'text/plain');
     res.end('Hello World\n');
   });
-var server_port = process.env.YOUR_PORT || process.env.PORT || 80;
-var server_host = process.env.YOUR_HOST || '0.0.0.0';
+var server_port = process.env.PORT;
+var server_host = process.env.HOST;
 server.listen(server_port, server_host, function() {
     console.log('Listening on port %d', server_port);
 });
