@@ -1,0 +1,48 @@
+const http = require('http');
+const puppeteer = require('puppeteer');
+const Discord = require('discord.js');
+var auth = require('./auth.json');
+const client = new Discord.Client();
+
+client.login(auth.token); 
+
+const server = http.createServer((req, res) => {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Hello World\n');
+  });
+var server_port = process.env.YOUR_PORT || process.env.PORT || 80;
+var server_host = process.env.YOUR_HOST || '0.0.0.0';
+server.listen(server_port, server_host, function() {
+    console.log('Listening on port %d', server_port);
+});
+client.on('ready', function (evt) {
+    console.log('ready');
+    setInterval(function() { http.get("http://corona-virus-bot-discord.herokuapp.com/"); }, 300000);
+});
+function sleep (time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+async function Korona() {
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.goto('https://korona.ws/');
+    await sleep(2000);
+    await page.screenshot({path: 'korona_PL.png'});
+    await page.goto('https://coronavirus.jhu.edu/map.html/');
+    await sleep(7000);
+    await page.screenshot({path: 'korona.png'});
+    await browser.close();
+}
+
+client.on('message', message => {
+	if (message.content === 'korona') {
+        message.channel.send("", {files: ["korona.png"]});
+    } else if (message.content === 'koronaPL') {
+        message.channel.send("", {files: ["korona_PL.png"]});
+    }else if (message.content === '!help') {
+        message.channel.send("Available commands:\n- korona\n- koronaPL\n");
+    }
+});
+setInterval(Korona, 15000)
